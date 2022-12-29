@@ -14,7 +14,7 @@ func CreateToken(userId uint) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = userId
-	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
@@ -99,7 +99,7 @@ func RefreshToken(expiredToken string, userId uint) (string, error) {
 	if err.Error() == "Token is expired" {
 		claims["authorized"] = true
 		claims["user_id"] = userId
-		claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
+		claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		return token.SignedString([]byte(os.Getenv("API_SECRET")))
 	}

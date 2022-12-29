@@ -4,12 +4,30 @@ import (
 	"apicars/models"
 
 	"gorm.io/gorm"
+
+	"apicars/utils/structs"
 )
 
-func GetAllCars(db *gorm.DB) ([]models.Car, error) {
+func GetAllCars(db *gorm.DB) ([]structs.ListCarsUser, error) {
 	var cars []models.Car
+	var listCarsUser []structs.ListCarsUser
+	var user models.User
 	err := db.Find(&cars).Error
-	return cars, err
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, car := range cars {
+		err := db.Where("id = ?", car.User_Id).First(&user).Error
+		if err != nil {
+			return nil, err
+		}
+		listCarsUser = append(listCarsUser, structs.ListCarsUser{CarsInfo: structs.CarsUserUnique{Car: car, User: structs.UserInfo{Id: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}}})
+
+	}
+
+	return listCarsUser, nil
 }
 
 func GetCarById(db *gorm.DB, id string) (models.Car, error) {
@@ -103,18 +121,21 @@ func GetCarsByYearAndMakeAndSoldAndModel(db *gorm.DB, year int, make string, sol
 	return cars, err
 }
 
-
-func GetCarsByMyIdUser(db *gorm.DB, id uint) ([]models.Car, error) {
+func GetCarsByMyIdUser(db *gorm.DB, id uint) (structs.CarsUser, error, error) {
 	var cars []models.Car
+	var user models.User
 	err := db.Where("user_id = ?", id).Find(&cars).Error
-	return cars, err
+	err2 := db.Where("id = ?", id).First(&user).Error
+	return structs.CarsUser{
+		Cars: cars,
+		User: user,
+	}, err, err2
 }
 
-
-func GetCarsByYearOrMake(db *gorm.DB, year int, make string) ([]models.Car, error) {
+func GetCarsByYearOrMake(db *gorm.DB, year int, make string) ([]models.Car, models.User, error) {
 	var cars []models.Car
 	err := db.Where("year = ? OR make = ?", year, make).Find(&cars).Error
-	return cars, err
+	return cars, models.User{}, err
 }
 
 func GetCarsByYearOrSold(db *gorm.DB, year int, sold bool) ([]models.Car, error) {
