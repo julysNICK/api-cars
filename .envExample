@@ -1,23 +1,23 @@
 # Postgres Live
-DB_HOST=full_db_postgres
-# DB_HOST=127.0.0.1                             # when running the app without docker 
+DB_HOST=nameDB
+# DB_HOST=127.0.0.1                            
 DB_DRIVER=postgres
-API_SECRET=98hbun98h                            # Used for creating a JWT. Can be anything 
-DB_USER=julys
-DB_PASSWORD=1234567891
-DB_NAME=fullstack_api
-DB_PORT=5432 
+API_SECRET=yourSecret                           
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_NAME=your_db_name
+DB_PORT=your_port 
 
 # Used by pgadmin service 
-PGADMIN_DEFAULT_EMAIL=live@admin.com
-PGADMIN_DEFAULT_PASSWORD=admin
+PGADMIN_DEFAULT_EMAIL=your_email
+PGADMIN_DEFAULT_PASSWORD=your_password
 
-# Postgres Test
-TEST_DB_HOST=localhost                      
-# TEST_DB_HOST=127.0.0.1                        # when running the app without docker 
-TEST_DB_DRIVER=postgres
-TEST_API_SECRET=98hbun98h
-TEST_DB_USER=julys
-TEST_DB_PASSWORD=1234567891
-TEST_DB_NAME=fullstack_api_test
-TEST_DB_PORT=5432
+
+TEST_DB_HOST=nameDB                      
+# TEST_DB_HOST=127.0.0.1                        
+TEST_DB_DRIVER=your_driver
+TEST_API_SECRET=your_secret
+TEST_DB_USER=your_user
+TEST_DB_PASSWORD=your_password
+TEST_DB_NAME=your_db_name
+TEST_DB_PORT=your_port
