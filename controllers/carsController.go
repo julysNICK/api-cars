@@ -9,18 +9,14 @@ import (
 	"apicars/models"
 	"apicars/services"
 
+	utilsResponse "apicars/utils"
+
 	"github.com/gorilla/mux"
 )
 
-var CarList = []models.Car{
-	{Make: "Ford", Model: "Mustang", Year: "1969", Is_Sold: false},
-	{Make: "Ford", Model: "F150", Year: "2018", Is_Sold: true},
-	{Make: "Chevrolet", Model: "Camaro", Year: "2019", Is_Sold: false},
-	{Make: "Chevrolet", Model: "Silverado", Year: "2018", Is_Sold: true},
-	{Make: "Dodge", Model: "Charger", Year: "2019", Is_Sold: false},
-}
 
-func HelloApi(w http.ResponseWriter, r *http.Request) {
+
+func HelloApi(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message": "Hello, API"}`))
@@ -28,39 +24,34 @@ func HelloApi(w http.ResponseWriter, r *http.Request) {
 
 func (ServerConfig *ServerConfig) GetCars(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	
 	carsList, err := services.GetAllCars(ServerConfig.DB)
 
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Cars not found"}`))
+		utilsResponse.ResponseError(w, http.StatusNotFound, "Cars not found")
 		return
 	}
 
-	json.NewEncoder(w).Encode(carsList)
+	utilsResponse.ResponseJson(w, http.StatusOK, carsList)
 
 }
 
 func (ServerConfig *ServerConfig) GetCarById(w http.ResponseWriter, r *http.Request) {
 	idCar := mux.Vars(r)["id"]
 	if idCar == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not found - id not found"}`))
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	car, err := services.GetCarById(ServerConfig.DB, idCar)
-
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not found"}`))
+		utilsResponse.ResponseError(w, http.StatusBadRequest, "Id is required")
 		return
 	}
 
-	json.NewEncoder(w).Encode(car)
+
+	car, err := services.GetCarById(ServerConfig.DB, idCar)
+
+	if err != nil {
+		utilsResponse.ResponseError(w, http.StatusNotFound,"Car not found")
+		return
+	}
+
+	utilsResponse.ResponseJson(w, http.StatusOK, car)
 }
 
 func (ServerConfig *ServerConfig) AddCar(w http.ResponseWriter, r *http.Request) {
@@ -70,32 +61,24 @@ func (ServerConfig *ServerConfig) AddCar(w http.ResponseWriter, r *http.Request)
 	uid, err := auth.ExtractTokenId(r)
 
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"message": "Unauthorized"}`))
+		utilsResponse.ResponseError(w, http.StatusUnauthorized,"Unauthorized")
 		return
 	}
 	errCar := services.CreateCar(ServerConfig.DB, newCar, uid)
 
 	if errCar != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not created"}`))
+		utilsResponse.ResponseError(w, http.StatusInternalServerError, "Error creating car")
+		return
 	}
 
-	fmt.Println(uid)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Car created"}`))
+	utilsResponse.ResponseJson(w, http.StatusCreated, newCar)
 }
 
 func (ServerConfig *ServerConfig) UpdateCar(w http.ResponseWriter, r *http.Request) {
 	idCar := mux.Vars(r)["id"]
 	if idCar == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not updated - id not found"}`))
+		utilsResponse.ResponseError(w, http.StatusBadRequest, "Id is required")
 	}
 
 	var newCar models.Car
@@ -104,34 +87,27 @@ func (ServerConfig *ServerConfig) UpdateCar(w http.ResponseWriter, r *http.Reque
 	err := services.UpdateCarById(ServerConfig.DB, idCar, newCar)
 
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not updated"}`))
+		utilsResponse.ResponseError(w, http.StatusNotFound,"Car not updated")
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Car updated"}`))
-
+	utilsResponse.ResponseJson(w, http.StatusOK, newCar)
 }
 
 func (ServerConfig *ServerConfig) DeleteCar(w http.ResponseWriter, r *http.Request) {
 	idCar := mux.Vars(r)["id"]
 
 	if idCar == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not deleted - id not found"}`))
+		utilsResponse.ResponseError(w, http.StatusBadRequest, "Id is required")
+		return
 	}
 
 	err := services.DeleteCarById(ServerConfig.DB, idCar)
 
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Car not deleted"}`))
+		utilsResponse.ResponseError(w, http.StatusNotFound,"Car not deleted")
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Car deleted"}`))
+
+	utilsResponse.ResponseJson(w, http.StatusOK, fmt.Sprintf("Car %s deleted", idCar))
 
 }
