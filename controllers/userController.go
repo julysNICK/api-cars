@@ -3,20 +3,11 @@ package carsController
 import (
 	"apicars/models"
 	"apicars/services"
+	"apicars/structs"
 	"encoding/json"
 	"net/http"
 )
 
-type responseUser struct {
-	Message string      `json:"message"`
-	User    models.User `json:"user"`
-	Token   string      `json:"token"`
-}
-
-type refreshTokenResponse struct {
-	Message string `json:"message"`
-	Token   string `json:"token"`
-}
 
 func (ServerConfig *ServerConfig) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -30,7 +21,7 @@ func (ServerConfig *ServerConfig) Register(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(responseUser{Message: "User created successfully", User: user})
+	json.NewEncoder(w).Encode( structs.ResponseUser{Message: "User created successfully", User: user})
 }
 
 func (ServerConfig *ServerConfig) Login(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +35,7 @@ func (ServerConfig *ServerConfig) Login(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(responseUser{Message: "User login successfully", User: userFound, Token: token})
+	json.NewEncoder(w).Encode(structs.ResponseUser{Message: "User login successfully", User: userFound, Token: token})
 }
 
 func (ServerConfig *ServerConfig) RefreshSession(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +50,6 @@ func (ServerConfig *ServerConfig) RefreshSession(w http.ResponseWriter, r *http.
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(responseUser{Message: "Token refreshed successfully", Token: newToken})
+	json.NewEncoder(w).Encode(structs.ResponseUser{Message: "Token refreshed successfully", Token: newToken})
 
 }
