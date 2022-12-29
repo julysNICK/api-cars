@@ -3,7 +3,8 @@ package carsController
 import (
 	"apicars/models"
 	"apicars/services"
-	"apicars/structs"
+	"apicars/utils/structs"
+
 	utilsResponse "apicars/utils"
 	"encoding/json"
 	"net/http"
