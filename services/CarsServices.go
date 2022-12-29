@@ -103,6 +103,14 @@ func GetCarsByYearAndMakeAndSoldAndModel(db *gorm.DB, year int, make string, sol
 	return cars, err
 }
 
+
+func GetCarsByMyIdUser(db *gorm.DB, id uint) ([]models.Car, error) {
+	var cars []models.Car
+	err := db.Where("user_id = ?", id).Find(&cars).Error
+	return cars, err
+}
+
+
 func GetCarsByYearOrMake(db *gorm.DB, year int, make string) ([]models.Car, error) {
 	var cars []models.Car
 	err := db.Where("year = ? OR make = ?", year, make).Find(&cars).Error

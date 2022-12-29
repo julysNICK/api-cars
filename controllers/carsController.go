@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"apicars/auth"
 	"apicars/models"
@@ -52,6 +53,45 @@ func (ServerConfig *ServerConfig) GetCarById(w http.ResponseWriter, r *http.Requ
 	}
 
 	utilsResponse.ResponseJson(w, http.StatusOK, car)
+}
+
+
+func (ServerConfig *ServerConfig) GetCarsByMyIdUser(w http.ResponseWriter, r *http.Request) {
+	uid, err := auth.ExtractTokenId(r)
+
+	if err != nil {
+		utilsResponse.ResponseError(w, http.StatusUnauthorized,"Unauthorized")
+		return
+	}
+
+	cars, err := services.GetCarsByMyIdUser(ServerConfig.DB, uid)
+
+	if err != nil {
+		utilsResponse.ResponseError(w, http.StatusNotFound,"Cars not found")
+		return
+	}
+
+	utilsResponse.ResponseJson(w, http.StatusOK, cars)
+}
+
+
+func (ServerConfig *ServerConfig) GetCarsByUserId(w http.ResponseWriter, r *http.Request) {
+	uid := mux.Vars(r)["id"]
+	convertInt, _ := strconv.Atoi(uid)
+
+	if uid == "" {
+		utilsResponse.ResponseError(w, http.StatusBadRequest, "Id is required")
+		return
+	}
+
+	cars, err := services.GetCarsByMyIdUser(ServerConfig.DB, uint(convertInt))
+
+	if err != nil {
+		utilsResponse.ResponseError(w, http.StatusNotFound,"Cars not found")
+		return
+	}
+
+	utilsResponse.ResponseJson(w, http.StatusOK, cars)
 }
 
 func (ServerConfig *ServerConfig) AddCar(w http.ResponseWriter, r *http.Request) {

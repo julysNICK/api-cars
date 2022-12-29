@@ -6,6 +6,8 @@ func (r *ServerConfig) GetRouter() {
 	r.Router.HandleFunc("/api/v1/", HelloApi).Methods("GET")
 	r.Router.HandleFunc("/api/v1/car/{id}", middlewares.SetMiddlewareAuthentication(r.GetCarById)).Methods("GET")
 	r.Router.HandleFunc("/api/v1/car", middlewares.SetMiddlewareAuthentication(r.AddCar)).Methods("POST")
+	r.Router.HandleFunc("/api/v1/cars/my" , middlewares.SetMiddlewareAuthentication(r.GetCarsByMyIdUser)).Methods("GET")
+	r.Router.HandleFunc("/api/v1/cars/user/{id}" , middlewares.SetMiddlewareAuthentication(r.GetCarsByUserId)).Methods("GET")
 	r.Router.HandleFunc("/api/v1/cars", r.GetCars).Methods("GET")
 	r.Router.HandleFunc("/api/v1/car/{id}", r.UpdateCar).Methods("PATCH")
 	r.Router.HandleFunc("/api/v1/car/{id}", r.DeleteCar).Methods("DELETE")
