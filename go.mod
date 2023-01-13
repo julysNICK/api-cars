@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/golang-migrate/migrate/v4 v4.15.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
