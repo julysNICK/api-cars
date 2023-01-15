@@ -37,7 +37,7 @@ func GetAllCars(db *gorm.DB) ([]structs.ListCarsUser, error) {
 
 func GetCarById(db *gorm.DB, id string) (models.Car, error) {
 	var car models.Car
-	err := db.Where("id = ?", id).First(&car).Error
+	err := db.Raw("SELECT * FROM cars WHERE id = ?", id).Scan(&car).Error
 	return car, err
 }
 
