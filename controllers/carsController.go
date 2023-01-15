@@ -22,7 +22,8 @@ func HelloApi(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (ServerConfig *ServerConfig) GetCars(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	carsList, err := services.GetAllCars(ServerConfig.DB)
 
 	if err != nil {
@@ -77,14 +78,14 @@ func (ServerConfig *ServerConfig) GetCarsByUserId(w http.ResponseWriter, r *http
 		return
 	}
 
-	_, err, err2 := services.GetCarsByMyIdUser(ServerConfig.DB, uint(convertInt))
+	carsUsers, err, err2 := services.GetCarsByMyIdUser(ServerConfig.DB, uint(convertInt))
 
 	if err != nil || err2 != nil {
 		utilsResponse.ResponseError(w, http.StatusNotFound, "Cars not found")
 		return
 	}
 
-	utilsResponse.ResponseJson(w, http.StatusOK, "oi")
+	utilsResponse.ResponseJson(w, http.StatusOK, carsUsers)
 }
 
 func (ServerConfig *ServerConfig) AddCar(w http.ResponseWriter, r *http.Request) {

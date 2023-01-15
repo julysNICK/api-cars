@@ -2,6 +2,7 @@ package services
 
 import (
 	"apicars/models"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -19,10 +20,14 @@ func GetAllCars(db *gorm.DB) ([]structs.ListCarsUser, error) {
 	}
 
 	for _, car := range cars {
-		err := db.Where("id = ?", car.User_Id).First(&user).Error
-		if err != nil {
-			return nil, err
+
+		err2 := db.Raw("SELECT * FROM users WHERE id = ?", car.User_Id).Scan(&user).Error
+
+		if err2 != nil {
+			fmt.Println(err2.Error())
+			return nil, err2
 		}
+
 		listCarsUser = append(listCarsUser, structs.ListCarsUser{CarsInfo: structs.CarsUserUnique{Car: car, User: structs.UserInfo{Id: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}}})
 
 	}
