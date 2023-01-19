@@ -36,23 +36,27 @@ func (ServerConfig *ServerConfig) GetCars(w http.ResponseWriter, r *http.Request
 }
 
 func (ServerConfig *ServerConfig) GetCarById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	idCar := mux.Vars(r)["id"]
 	if idCar == "" {
 		utilsResponse.ResponseError(w, http.StatusBadRequest, "Id is required")
 		return
 	}
 
-	car, err := services.GetCarById(ServerConfig.DB, idCar)
+	carUser, err, err2 := services.GetCarById(ServerConfig.DB, idCar)
 
-	if err != nil {
+	if err != nil || err2 != nil {
 		utilsResponse.ResponseError(w, http.StatusNotFound, "Car not found")
 		return
 	}
 
-	utilsResponse.ResponseJson(w, http.StatusOK, car)
+	utilsResponse.ResponseJson(w, http.StatusOK, carUser)
 }
 
 func (ServerConfig *ServerConfig) GetCarsByMyIdUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	uid, err := auth.ExtractTokenId(r)
 	if err != nil {
 		utilsResponse.ResponseError(w, http.StatusUnauthorized, "Unauthorized")
@@ -89,6 +93,7 @@ func (ServerConfig *ServerConfig) GetCarsByUserId(w http.ResponseWriter, r *http
 }
 
 func (ServerConfig *ServerConfig) AddCar(w http.ResponseWriter, r *http.Request) {
+
 	var newCar models.Car
 	_ = json.NewDecoder(r.Body).Decode(&newCar)
 
@@ -127,6 +132,8 @@ func (ServerConfig *ServerConfig) UpdateCar(w http.ResponseWriter, r *http.Reque
 }
 
 func (ServerConfig *ServerConfig) DeleteCar(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	idCar := mux.Vars(r)["id"]
 
 	if idCar == "" {
@@ -143,4 +150,26 @@ func (ServerConfig *ServerConfig) DeleteCar(w http.ResponseWriter, r *http.Reque
 
 	utilsResponse.ResponseJson(w, http.StatusOK, fmt.Sprintf("Car %s deleted", idCar))
 
+}
+
+func (ServerConfig *ServerConfig) GetCarsByMake(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	make := mux.Vars(r)["make"]
+
+	println(make)
+
+	if make == "" {
+		utilsResponse.ResponseError(w, http.StatusBadRequest, "Make is required")
+		return
+	}
+
+	carsMake, err := services.GetCarsByMake(ServerConfig.DB, make)
+
+	if err != nil {
+		utilsResponse.ResponseError(w, http.StatusNotFound, "Cars not found")
+		return
+	}
+
+	utilsResponse.ResponseJson(w, http.StatusOK, carsMake)
 }

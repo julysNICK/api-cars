@@ -11,7 +11,6 @@ import (
 	"net/http"
 )
 
-
 func (ServerConfig *ServerConfig) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
@@ -42,6 +41,8 @@ func (ServerConfig *ServerConfig) Login(w http.ResponseWriter, r *http.Request) 
 }
 
 func (ServerConfig *ServerConfig) RefreshSession(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	var user models.User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	newToken, err := services.RefreshToken(ServerConfig.DB, r)

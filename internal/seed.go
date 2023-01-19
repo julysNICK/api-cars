@@ -35,8 +35,8 @@ func All() []Seed {
 	return []Seed{
 		{
 			Cars: Cars{
-				Model:          "Ferrari",
-				Make:           "Ferrari",
+				Model:          "ferrari",
+				Make:           "ferrari",
 				Image:          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZrounUeNxS-_8IzjiG_PYuqjDdv0J5uk6Zw&usqp=CAU",
 				Year:           "2020",
 				Reason_To_Sell: "I want to buy a new car",
@@ -49,8 +49,8 @@ func All() []Seed {
 			},
 			Run: func(d *gorm.DB) error {
 				return CreateCar(d, Cars{
-					Model:          "Ferrari",
-					Make:           "Ferrari",
+					Model:          "ferrari",
+					Make:           "ferrari",
 					Image:          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZrounUeNxS-_8IzjiG_PYuqjDdv0J5uk6Zw&usqp=CAU",
 					Year:           "2020",
 					Reason_To_Sell: "I want to buy a new car",
@@ -65,8 +65,8 @@ func All() []Seed {
 		},
 		{
 			Cars: Cars{
-				Model:          "Ford",
-				Make:           "Ford",
+				Model:          "ford",
+				Make:           "ford",
 				Image:          "https://pictures.dealer.com/o/offleaseonlycommiamihomedeliverynow/1462/3a743def55179eced6185b57d00cc35bx.jpg?impolicy=downsize_bkpt&imdensity=1&w=520",
 				Year:           "2002",
 				Reason_To_Sell: "I want to buy a new car",
@@ -79,8 +79,8 @@ func All() []Seed {
 			},
 			Run: func(d *gorm.DB) error {
 				return CreateCar(d, Cars{
-					Model:          "Ford",
-					Make:           "Ford",
+					Model:          "ford",
+					Make:           "ford",
 					Image:          "https://pictures.dealer.com/o/offleaseonlycommiamihomedeliverynow/1462/3a743def55179eced6185b57d00cc35bx.jpg?impolicy=downsize_bkpt&imdensity=1&w=520",
 					Year:           "2002",
 					Reason_To_Sell: "I want to buy a new car",

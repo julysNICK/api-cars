@@ -3,6 +3,7 @@ package services
 import (
 	"apicars/models"
 	"fmt"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -35,10 +36,19 @@ func GetAllCars(db *gorm.DB) ([]structs.ListCarsUser, error) {
 	return listCarsUser, nil
 }
 
-func GetCarById(db *gorm.DB, id string) (models.Car, error) {
+func GetCarById(db *gorm.DB, id string) (structs.ListCarsUser, error, error) {
 	var car models.Car
+	var carUser structs.ListCarsUser
+
+	var user models.User
 	err := db.Raw("SELECT * FROM cars WHERE id = ?", id).Scan(&car).Error
-	return car, err
+
+	err2 := db.Raw("SELECT * FROM users WHERE id = ?", car.User_Id).Scan(&user).Error
+
+	carUser.CarsInfo.Car = car
+	carUser.CarsInfo.User = structs.UserInfo{Id: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}
+
+	return carUser, err, err2
 }
 
 func GetCarByModel(db *gorm.DB, model string) (models.Car, error) {
@@ -55,7 +65,7 @@ func GetCarsByYear(db *gorm.DB, year int) ([]models.Car, error) {
 
 func GetCarsByMake(db *gorm.DB, make string) ([]models.Car, error) {
 	var cars []models.Car
-	err := db.Where("make = ?", make).Find(&cars).Error
+	err := db.Where("make = ?", strings.ToLower(make)).Find(&cars).Error
 	return cars, err
 }
 

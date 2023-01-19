@@ -19,15 +19,16 @@ func (r *ServerConfig) GetRouter() {
 		}),
 	)
 	r.Router.HandleFunc("/api/v1/", HelloApi).Methods("GET")
-	r.Router.HandleFunc("/api/v1/car/{id}", middlewares.SetMiddlewareAuthentication(r.GetCarById)).Methods("GET")
-	r.Router.HandleFunc("/api/v1/car", middlewares.SetMiddlewareAuthentication(r.AddCar)).Methods("POST")
-	r.Router.HandleFunc("/api/v1/cars/my", middlewares.SetMiddlewareAuthentication(r.GetCarsByMyIdUser)).Methods("GET")
+	r.Router.HandleFunc("/api/v1/car/{id}", r.GetCarById).Methods("GET", http.MethodOptions)
+	r.Router.HandleFunc("/api/v1/car", middlewares.SetMiddlewareAuthentication(r.AddCar)).Methods("POST", http.MethodOptions)
+	r.Router.HandleFunc("/api/v1/cars/my", middlewares.SetMiddlewareAuthentication(r.GetCarsByMyIdUser)).Methods("GET", http.MethodOptions)
 	r.Router.HandleFunc("/api/v1/cars/user/{id}", middlewares.SetMiddlewareAuthentication(r.GetCarsByUserId)).Methods("GET")
 	r.Router.HandleFunc("/api/v1/cars", r.GetCars).Methods("GET", http.MethodOptions)
 	r.Router.HandleFunc("/api/v1/car/{id}", r.UpdateCar).Methods("PATCH")
-	r.Router.HandleFunc("/api/v1/car/{id}", r.DeleteCar).Methods("DELETE")
+	r.Router.HandleFunc("/api/v1/car/{id}", middlewares.SetMiddlewareAuthentication(r.DeleteCar)).Methods("DELETE", http.MethodOptions)
+	r.Router.HandleFunc("/api/v1/car/make/{make}", r.GetCarsByMake).Methods("GET", http.MethodOptions)
 
 	r.Router.HandleFunc("/api/v1/register", r.Register).Methods("POST", http.MethodOptions)
 	r.Router.HandleFunc("/api/v1/login", r.Login).Methods("POST", http.MethodOptions)
-	r.Router.HandleFunc("/api/v1/refresh", r.RefreshSession).Methods("POST")
+	r.Router.HandleFunc("/api/v1/refresh", r.RefreshSession).Methods("POST", http.MethodOptions)
 }
